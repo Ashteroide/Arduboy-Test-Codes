@@ -14,13 +14,13 @@ GameState gameState = GameState::TitleScreen;
 
 enum class CharacterState
 {
-  updateCharacterStanding,
-  updateCharacterRunning,
-  updateCharacterJumping,
-  updateCharacterDucking,
+  Standing,
+  Running,
+  Jumping,
+  Ducking,
 };
 
-CharacterState characterState = CharacterState::updateCharacterStanding;
+CharacterState characterState = CharacterState::Standing;
 
 void setup() {
   arduboy.begin();
@@ -34,6 +34,7 @@ void loop() {
   }
 
   arduboy.pollButtons();
+  
   arduboy.clear();
 
   switch (gameState)
@@ -94,55 +95,49 @@ void drawGameOver()
 //Character
 void updateCharacter()
 {
+  if(arduboy.pressed(UP_BUTTON)) {
+    characterState = CharacterState::Jumping;
+  }else if(arduboy.pressed(RIGHT_BUTTON)) {
+    characterState = CharacterState::Running;
+  }else if(arduboy.pressed(DOWN_BUTTON)) {
+    characterState = CharacterState::Ducking;
+  } else {
+    characterState = CharacterState::Standing;
+  }
   switch(characterState)
   {
-    case CharacterState::updateCharacterStanding:
-      updateStanding();
+    case CharacterState::Jumping:
+      updateCharacterJumping();
       break;
-    case CharacterState::updateCharacterJumping:
-      updateJumping();
+    case CharacterState::Standing:
+      updateCharacterStanding();
       break;
-    case CharacterState::updateCharacterRunning:
-      updateRunning();
+    case CharacterState::Running:
+      updateCharacterRunning();
       break;
-    case CharacterState::updateCharacterDucking:
-      updateDucking();
+    case CharacterState::Ducking:
+      updateCharacterDucking();
       break;
-  }
-  arduboy.display();
-
-  if(arduboy.pressed(UP_BUTTON)) {
-    characterState = CharacterState::updateCharacterJumping;
-  }else if(arduboy.pressed(RIGHT_BUTTON)) {
-    characterState = CharacterState::updateCharacterRunning;
-  }else if(arduboy.pressed(DOWN_BUTTON)) {
-    characterState = CharacterState::updateCharacterDucking;
-  } else {
-    characterState = CharacterState::updateCharacterStanding;
   }
 }
 
 //CharacterState
-void updateStanding()
+void updateCharacterStanding()
 {
   arduboy.print(F("Standing"));
-  arduboy.display();
 }
 
-void updateJumping()
+void updateCharacterJumping()
 {
   arduboy.print(F("Jumping"));
-  arduboy.display();
 }
 
-void updateRunning()
+void updateCharacterRunning()
 {
   arduboy.print(F("Running"));
-  arduboy.display();
 }
 
-void updateDucking()
+void updateCharacterDucking()
 {
   arduboy.print(F("Ducking"));
-  arduboy.display();
 }
